@@ -383,11 +383,11 @@ export default function Home() {
       setLocalMediaStream(stream);
       setIsCameraOff(true);
 
-      const configuredSignalingUrl = process.env.NEXT_PUBLIC_SIGNALING_URL?.trim();
-      const defaultSignalingUrl = `${
-        window.location.protocol === "https:" ? "wss" : "ws"
-      }://${window.location.host}/ws`;
-      const signalingUrl = configuredSignalingUrl || defaultSignalingUrl;
+      const signalingUrl = resolveSignalingUrl();
+      if (!signalingUrl) {
+        return;
+      }
+
       const ws = new WebSocket(signalingUrl);
 
       ws.onopen = () => {
@@ -786,6 +786,23 @@ export default function Home() {
     }
 
     return /(screen|window|display|monitor|tab)/i.test(track.label);
+  }
+
+  function resolveSignalingUrl() {
+    const configuredSignalingUrl = process.env.NEXT_PUBLIC_SIGNALING_URL?.trim();
+    if (configuredSignalingUrl) {
+      return configuredSignalingUrl;
+    }
+
+    const isVercelHost = /\.vercel\.app$/i.test(window.location.hostname);
+    if (isVercelHost) {
+      setError(
+        "Signaling server is not configured. Set NEXT_PUBLIC_SIGNALING_URL in Vercel to your WebSocket signaling endpoint."
+      );
+      return "";
+    }
+
+    return `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`;
   }
 
   async function copyInvite() {
