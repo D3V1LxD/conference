@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.mjs",
+    "dev": "next dev",
+    "dev:full": "node server.mjs",
     "build": "next build",
-    "start": "cross-env NODE_ENV=production node server.mjs",
+    "start": "next start",
+    "start:full": "cross-env NODE_ENV=production node server.mjs",
     "lint": "eslint"
   },
   "dependencies": {

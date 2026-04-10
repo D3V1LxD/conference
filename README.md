@@ -36,6 +36,12 @@ Start in development mode:
 npm run dev
 ```
 
+Run full local stack (Next.js + built-in WebSocket signaling server):
+
+```bash
+npm run dev:full
+```
+
 Build for production:
 
 ```bash
@@ -46,6 +52,12 @@ Start production server:
 
 ```bash
 npm run start
+```
+
+Start full production stack with built-in signaling server:
+
+```bash
+npm run start:full
 ```
 
 Open http://localhost:3000
@@ -62,3 +74,31 @@ Open http://localhost:3000
 - Room and participant data reset when the server restarts.
 - Browser permissions for camera/microphone are required.
 - For internet deployment (outside local network), add TURN servers for NAT traversal reliability.
+
+## Deploy On Vercel
+
+This app can be deployed on Vercel as a Next.js frontend.
+
+Important: Vercel does not run this project's custom Node WebSocket server (`server.mjs`) as a persistent process.
+For real-time conferencing in production, deploy signaling server separately and point the frontend to it.
+
+1. Push the project to GitHub.
+2. Import the repository in Vercel.
+3. In Vercel Project Settings -> Environment Variables, set:
+
+```bash
+NEXT_PUBLIC_SIGNALING_URL=wss://your-signaling-server.example.com/ws
+```
+
+4. Deploy.
+
+### Build Settings (Vercel)
+
+- Framework Preset: `Next.js`
+- Build Command: `npm run build`
+- Output: default Next.js output
+
+### If You Keep Signaling On Another Host
+
+- Ensure CORS and network access allow browser WebSocket connections.
+- Use `wss://` in production.

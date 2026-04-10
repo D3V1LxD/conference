@@ -383,8 +383,12 @@ export default function Home() {
       setLocalMediaStream(stream);
       setIsCameraOff(true);
 
-      const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-      const ws = new WebSocket(`${protocol}://${window.location.host}/ws`);
+      const configuredSignalingUrl = process.env.NEXT_PUBLIC_SIGNALING_URL?.trim();
+      const defaultSignalingUrl = `${
+        window.location.protocol === "https:" ? "wss" : "ws"
+      }://${window.location.host}/ws`;
+      const signalingUrl = configuredSignalingUrl || defaultSignalingUrl;
+      const ws = new WebSocket(signalingUrl);
 
       ws.onopen = () => {
         ws.send(
