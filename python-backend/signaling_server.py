@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import json
 import time
 import uuid
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,8 +13,8 @@ from fastapi.middleware.cors import CORSMiddleware
 @dataclass
 class Room:
     key: str
-    clients: dict[str, WebSocket] = field(default_factory=dict)
-    names: dict[str, str] = field(default_factory=dict)
+    clients: Dict[str, WebSocket] = field(default_factory=dict)
+    names: Dict[str, str] = field(default_factory=dict)
 
 
 app = FastAPI(title="Conferly Signaling Server")
@@ -26,10 +28,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-rooms: dict[str, Room] = {}
+rooms: Dict[str, Room] = {}
 
 
-async def send_json_safe(ws: WebSocket, payload: dict[str, Any]) -> None:
+async def send_json_safe(ws: WebSocket, payload: Dict[str, Any]) -> None:
     try:
         await ws.send_text(json.dumps(payload))
     except Exception:
@@ -37,7 +39,7 @@ async def send_json_safe(ws: WebSocket, payload: dict[str, Any]) -> None:
         pass
 
 
-async def broadcast(room: Room, payload: dict[str, Any], exclude_id: str | None = None) -> None:
+async def broadcast(room: Room, payload: Dict[str, Any], exclude_id: Optional[str] = None) -> None:
     for peer_id, client in list(room.clients.items()):
         if exclude_id and peer_id == exclude_id:
             continue
@@ -45,7 +47,7 @@ async def broadcast(room: Room, payload: dict[str, Any], exclude_id: str | None 
 
 
 @app.get("/health")
-async def health() -> dict[str, str]:
+async def health() -> Dict[str, str]:
     return {"status": "ok"}
 
 
@@ -53,9 +55,9 @@ async def health() -> dict[str, str]:
 async def websocket_signaling(ws: WebSocket) -> None:
     await ws.accept()
 
-    room_id: str | None = None
-    peer_id: str | None = None
-    display_name: str | None = None
+    room_id: Optional[str] = None
+    peer_id: Optional[str] = None
+    display_name: Optional[str] = None
 
     try:
         while True:
