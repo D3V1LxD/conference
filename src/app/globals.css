@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f4f7fb;
+  --foreground: #111827;
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-border: rgba(17, 24, 39, 0.12);
+  --accent: #0f766e;
+  --accent-strong: #115e59;
+  --danger: #b91c1c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-space-grotesk);
+}
+
+body {
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-space-grotesk), "Segoe UI", sans-serif;
+  background-image:
+    radial-gradient(circle at 0% 0%, rgba(15, 118, 110, 0.18), transparent 40%),
+    radial-gradient(circle at 85% 20%, rgba(8, 47, 73, 0.14), transparent 35%),
+    linear-gradient(145deg, #edf2f9 0%, #f8fafc 50%, #eff7f5 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.glass {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(16px);
+}
+
+.tile-in {
+  animation: tile-in 320ms ease both;
+}
+
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
